@@ -1,18 +1,15 @@
-![Gameplay Solutions Logo](https://media.discordapp.net/attachments/494323799441932298/617509643417157632/gameplay-transparent-5.png)
 # What is MARS?
-MARS is a C++, Open Source, 3D Game Engine in development by Gameplay.Solutions. 
-The goal of MARS is to be a Platform Agnostic solution to creating games, allowing anyone to be able to make a game regardless of the OS they are currently using.
+MARS is a C++, Open Source, 3D Game Engine in development. Started this project roughly 4 years ago when I was still learning C++; however I abandoned the project because of life situations. Well, it's almost 4 years later and I cloned the old repo and made this new one because why not. I think it'd be to work on again and see how much better I've gotten over the years.
 
-The idea for MARS originally came about when we wanted to create something unique, something that was our own. 
+Feel free to follow along or make pull requests. This isn't a serious project, just something to fool around with.
+
+The idea for MARS originally came about when I wanted to create something unique and challenging. 
 A Game Engine seemed like a huge task and a large challenge which added to the the enjoyment of working on it.
-
-MARS is 100% a passion project, we work on it because we enjoy it. If you think you might enjoy working on a project like this, feel free
-to submit a pull request. We're open to feedback.
 
 # Planned Features
 - [ ] Completely abstracted Rendering API with the ability to hotswap the renderer you are using with a simple console command.
 - [ ] Easy to extand gameplay framework
-- [ ] Commplete Lua scripting abstraction to allow easy gameplay scripting
+- [ ] Commplete scripting language to allow easy gameplay scripting
 - [ ] AI Suite
 - [ ] Complete Entity Component System
 - [ ] Networking Layer
