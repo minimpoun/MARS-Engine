@@ -25,13 +25,13 @@ bool MARS::WindowsInput::IsMouseButtonPressed_Implementation(int32 Button)
 	return _State == GLFW_PRESS;
 }
 
-float MARS::WindowsInput::GetMouseX_Implementation()
+double MARS::WindowsInput::GetMouseX_Implementation()
 {
 	auto[x, y] = GetMousePos_Implementation();
 	return x;
 }
 
-float MARS::WindowsInput::GetMouseY_Implementation()
+double MARS::WindowsInput::GetMouseY_Implementation()
 {
 	auto[x, y] = GetMousePos_Implementation();
 	return y;

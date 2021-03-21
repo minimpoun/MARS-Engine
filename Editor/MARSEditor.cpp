@@ -1,21 +1,26 @@
 #include <MARSCore.h>
-#include "imgui\imgui.h"
-#include "UserInterface\ImGuiLayer.h"
-#include "Rendering\BufferLayout.h"
-#include "Rendering\VertexArray.h"
-#include "Rendering\IndexBuffer.h"
+
 #include "UserInterface\OutputLog.h"
 
-class DetailsPanel : public ImGuiLayer
+class DetailsPanel : public Overlay
 {
 
 public:
-	virtual void RenderLayerUI(bool* bRender) override
-	{
-		bool bTrue = true;
-		bRender = &bTrue;
 
-		ImGuiLayer::RenderLayerUI(bRender);
+	DetailsPanel()
+		: Overlay("Details Panel")
+	{
+		bShowDemoWindow = false;
+	}
+	~DetailsPanel() { }
+	std::shared_ptr<OutputLog> _OutputLog;
+
+	virtual void RenderLayerUI() override
+	{
+		bool fuck = true;
+		bool* bRender = &fuck;
+
+		Overlay::RenderLayerUI();
 
 		// FPS Counter
 		{
@@ -32,7 +37,7 @@ public:
 			}
 
 			ImGui::SetNextWindowBgAlpha(0.15f);
-			if (ImGui::Begin("Stats", bRender, (Corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav));
+			if (ImGui::Begin("Stats", bRender, (Corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
 			{
 				ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 				ImGui::Separator();
@@ -62,17 +67,6 @@ public:
 		Draw(bRender);
 	}
 
-	static DetailsPanel* GetDetailsPanel()
-	{
-		static DetailsPanel* Instance = nullptr;
-		if (Instance == nullptr)
-		{
-			Instance = new DetailsPanel;
-		}
-
-		return Instance;
-	}
-
 protected:
 
 	void Draw(bool* bOpen)
@@ -86,7 +80,7 @@ protected:
 		if (bShowOutputLog) 
 		{
 			_OutputLog = std::make_shared<OutputLog>("Output Log");
-			_OutputLog->RenderLayerUI(&bShowOutputLog);
+			_OutputLog->RenderLayerUI();
 		}
 		else
 		{
@@ -148,21 +142,14 @@ protected:
 		if (ImGui::CollapsingHeader("Window Settings"))
 		{
 			ImGuiIO& IO = ImGui::GetIO();
-			ImGui::CheckboxFlags("Enable Docking", (uint32*)IO.ConfigFlags, ImGuiConfigFlags_DockingEnable);
+			PRAGMA_DISABLE_WARNING(4312)
+			ImGui::CheckboxFlags("Enable Docking", reinterpret_cast<uint32*>(IO.ConfigFlags), ImGuiConfigFlags_DockingEnable);
 		}
 
 		ImGui::End();
 	}
 
 private:
-
-	DetailsPanel()
-		: ImGuiLayer("Details Panel")
-	{
-		bShowDemoWindow = false;
-	}
-	~DetailsPanel() { }
-	std::shared_ptr<OutputLog> _OutputLog;
 };
 
 class DelegateTest
@@ -192,16 +179,10 @@ public:
 	}
 };
 
-class MARSEditor : public MARS::Application
+class Editor : public Layer
 {
-public:
-	MARSEditor()
+	virtual void OnAttach() override
 	{
-		Log::Get(LogTemp).Info(TEXT("{}"), __FUNCTION__);
-		
-		PushOverlay(GetImGuiLayer());
-		GetImGuiLayer()->bDrawUserInterface = true;
-
 		m_VertArray.reset(VertexArray::Create());
 
 		float verts[3 * 7] =
@@ -312,6 +293,57 @@ public:
 		m_Shader = std::make_shared<Shader>(vSource, fSource);
 		m_Shader2 = std::make_shared<Shader>(vSource2, fSource2);
 
+	}
+
+	virtual void OnUpdate() override
+	{
+		if (Input::IsKeyPressed(Keys::A))
+		{
+			Camera.SetWorldRotation(45.f);
+		}
+
+		RenderCommands::SetClearColor(LinearColor::Gray);
+		RenderCommands::Clear();
+
+		Renderer::BeginScene(Camera);
+
+		m_Shader2->Bind();
+		m_Shader2->UploadUniformMat4(Camera.GetViewProjectionMatrix(), "ViewProjection");
+		Renderer::Submit(SQ_VertArray);
+
+		m_Shader->Bind();
+		m_Shader2->UploadUniformMat4(Camera.GetViewProjectionMatrix(), "ViewProjection");
+		Renderer::Submit(m_VertArray);
+
+		Renderer::EndScene();
+	}
+
+private:
+
+	std::shared_ptr<Shader> m_Shader;
+	std::shared_ptr<VertexBuffer> m_VertBuffer;
+	std::shared_ptr<IndexBuffer> m_IndexBuffer;
+	std::shared_ptr<VertexArray> m_VertArray;
+
+	std::shared_ptr<Shader> m_Shader2;
+	std::shared_ptr<VertexBuffer> SQ_VertBuffer;
+	std::shared_ptr<IndexBuffer>  SQ_IndexBuffer;
+	std::shared_ptr<VertexArray>  SQ_VertArray;
+
+	OrthographicCamera Camera{1.6f, -1.6f, .9f, -.9f};
+
+};
+
+class MARSEditor : public MARS::Application
+{
+public:
+	MARSEditor()
+	{
+		Log::Get(LogTemp).Info(TEXT("{}"), __FUNCTION__);
+		
+		PushOverlay(GetImGuiLayer());
+		PushLayer(Layer::Get<Editor>());
+
 		DelegateTest l;
 		auto VoidDelegate = DECLARE_DELEGATE(DelegateTest, VoidFunc, l);
 		auto Int32Delegate = DECLARE_DELEGATE(DelegateTest, Int32Func, l);
@@ -325,11 +357,6 @@ public:
 	}
 
 
-
-	~MARSEditor()
-	{
-		
-	}
 };
 
 MARS::Application* MARS::CreateApplication()
@@ -337,7 +364,7 @@ MARS::Application* MARS::CreateApplication()
 	return new MARSEditor();
 }
 
-MARS::ImGuiLayer* MARS::CreateImGuiLayer()
+MARS::Overlay* MARS::CreateImGuiLayer()
 {
-	return DetailsPanel::GetDetailsPanel();
+	return Overlay::Get<DetailsPanel>();
 }

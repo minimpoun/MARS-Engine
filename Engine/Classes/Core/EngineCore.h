@@ -51,6 +51,11 @@ inline namespace MARS
 
 #define UNUSED_PROPERTY(x) (x);
 
+#define PRAGMA_DISABLE_WARNING(c)	\
+__pragma(warning(disable: c))		\
+__pragma(warning(push))				\
+__pragma(warning(pop))
+
 #define MAJOR_VERSION 0
 #define MINOR_VERSION 01f
 #define MARS_VERSION MAJOR_VERSION.MINOR_VERSION

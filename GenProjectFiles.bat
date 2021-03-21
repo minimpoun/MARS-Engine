@@ -5,7 +5,7 @@ cls
 title Generating Project Files...
 mkdir Build
 cd Build
-cmake ../ -G "Visual Studio 15 Win64"
+cmake ../ -G "Visual Studio 16"
 mkdir Debug
 mkdir Release
 cd /d %~dp0

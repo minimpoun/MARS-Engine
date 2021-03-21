@@ -17,7 +17,7 @@ public:
 	Array<ElementType>() : std::vector<ElementType>(){}
 	Array<ElementType>(size_t n) : std::vector<ElementType>(n){}
 
-	FORCEINLINE int32 Num() const
+	FORCEINLINE size_t Num() const
 	{
 		return size();
 	}

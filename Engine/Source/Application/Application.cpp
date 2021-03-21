@@ -1,20 +1,19 @@
 #include "Application/Application.h"
 #include "Input/InputHandler.h"
-#include "UserInterface/ImGuiLayer.h"
+#include "UserInterface/Overlay.h"
 #include "Rendering/BufferLayout.h"
 #include "Rendering/Renderer.h"
 #include "UserInterface/OutputLog.h"
 #include "Rendering/RenderTypes.h"
 
-extern ImGuiLayer* MARS::CreateImGuiLayer();
+extern Overlay* MARS::CreateImGuiLayer();
 
 inline namespace MARS
 {
 	Application* Application::Instance = nullptr;
-	ImGuiLayer* Application::ImGuiLayerPtr = nullptr;
+	Overlay* Application::ImGuiOverlayPtr = nullptr;
 
 	Application::Application()
-		: Camera(1.6f, -1.6f, .9f, -.9f)
 	{
 		Log::Get(LogTemp).Info(TEXT("{}"), __FUNCTION__);
 
@@ -22,7 +21,7 @@ inline namespace MARS
 		Instance = this;
 		WindowPtr = std::unique_ptr<Window>(Window::Create());
 		WindowPtr->SetEventCallback(BIND_EVENT_ONE_PARAM(Application::OnEvent));
-		ImGuiLayerPtr = MARS::CreateImGuiLayer();
+		ImGuiOverlayPtr = MARS::CreateImGuiLayer();
 	}
 
 	Application::~Application()
@@ -40,24 +39,9 @@ inline namespace MARS
 	{
 		while (bRunning)
 		{
-			RenderCommands::SetClearColor(LinearColor::Gray);
-			RenderCommands::Clear();
-
-			Renderer::BeginScene(Camera);
-
-			m_Shader2->Bind();
-			m_Shader2->UploadUniformMat4(Camera.GetViewProjectionMatrix(), "ViewProjection");
-			Renderer::Submit(SQ_VertArray);
-			
-			m_Shader->Bind();
-			m_Shader2->UploadUniformMat4(Camera.GetViewProjectionMatrix(), "ViewProjection");
-			Renderer::Submit(m_VertArray);
-			
-			Renderer::EndScene();
-
-			ImGuiLayerPtr->OnBegin();
+			ImGuiOverlayPtr->OnBegin();
 			UpdateLayers();
-			ImGuiLayerPtr->OnEnd();
+			ImGuiOverlayPtr->OnEnd();
 
 			WindowPtr->Refresh();
 		}
@@ -84,9 +68,9 @@ inline namespace MARS
 		InLayer->OnAttach();
 	}
 
-	void Application::PushOverlay(Layer* InOverlay)
+	void Application::PushOverlay(Overlay* InOverlay)
 	{
-		m_LayerStack.PushOverlay(InOverlay);
+		m_OverlayStack.PushOverlay(InOverlay);
 		InOverlay->OnAttach();
 	}
 
@@ -100,6 +84,11 @@ inline namespace MARS
 	void Application::UpdateLayers() const
 	{
 		for (auto* Element : m_LayerStack)
+		{
+			Element->OnUpdate();
+		}
+
+		for (auto* Element : m_OverlayStack)
 		{
 			Element->OnUpdate();
 			Element->RenderLayerUI();

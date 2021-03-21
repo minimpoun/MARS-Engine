@@ -12,7 +12,7 @@
 inline namespace MARS
 {
 	class Layer;
-	class ImGuiLayer;
+	class Overlay;
 
 	class EXPORT_TYPE Application
 	{
@@ -33,11 +33,11 @@ inline namespace MARS
 		void OnEvent(Event& e);
 
 		void PushLayer(Layer* InLayer);
-		void PushOverlay(Layer* InOverlay);
+		void PushOverlay(Overlay* InOverlay);
 
 		inline Window& GetWindow() { return *WindowPtr; }
 		inline static Application& Get() { return *Instance; }
-		inline static ImGuiLayer* GetImGuiLayer() { return ImGuiLayerPtr; }
+		inline static Overlay* GetImGuiLayer() { return ImGuiOverlayPtr; }
 
 	protected:
 
@@ -46,23 +46,13 @@ inline namespace MARS
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		MStack<Layer> m_LayerStack;
-		std::shared_ptr<Shader> m_Shader;
-		std::shared_ptr<VertexBuffer> m_VertBuffer;
-		std::shared_ptr<IndexBuffer> m_IndexBuffer;
-		std::shared_ptr<VertexArray> m_VertArray;
-
-		std::shared_ptr<Shader> m_Shader2;
-		std::shared_ptr<VertexBuffer> SQ_VertBuffer;
-		std::shared_ptr<IndexBuffer>  SQ_IndexBuffer;
-		std::shared_ptr<VertexArray>  SQ_VertArray;
-
-		OrthographicCamera Camera;
+		MStack<Overlay> m_OverlayStack;
 
 	private:
 
 		virtual void UpdateLayers() const;
 
-		static ImGuiLayer* ImGuiLayerPtr;
+		static Overlay* ImGuiOverlayPtr;
 		static Application* Instance;
 		std::unique_ptr<Window> WindowPtr;
 		bool bRunning = false;
@@ -73,5 +63,5 @@ inline namespace MARS
 namespace MARS
 {
 	Application* CreateApplication();
-	ImGuiLayer* CreateImGuiLayer();
+	Overlay* CreateImGuiLayer();
 }

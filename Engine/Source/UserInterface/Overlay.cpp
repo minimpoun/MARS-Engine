@@ -1,4 +1,4 @@
-#include "UserInterface/ImGuiLayer.h"
+#include "UserInterface/Overlay.h"
 #include "imgui/imgui.h"
 
 #include "imgui/examples/imgui_impl_glfw.h"
@@ -8,12 +8,17 @@
 
 #include <GLFW/glfw3.h>
 
-ImGuiLayer::ImGuiLayer(const String& InWindowName) : Layer(InWindowName) { Log::Get(LogGraphics).Info("ImGuiLayer Constructed"); }
-ImGuiLayer::~ImGuiLayer() { Log::Get(LogGraphics).Info("ImGuiLayer Destroyed"); }
+Overlay::Overlay(const String& InWindowName) : DebugName(InWindowName) { Log::Get(LogGraphics).Info("ImGuiLayer Constructed"); }
+Overlay::~Overlay() { Log::Get(LogGraphics).Info("ImGuiLayer Destroyed"); }
 
-bool MARS::ImGuiLayer::bShowDemoWindow = true;
+bool MARS::Overlay::bShowDemoWindow = true;
 
-void MARS::ImGuiLayer::OnAttach()
+void MARS::Overlay::OnUpdate()
+{
+
+}
+
+void MARS::Overlay::OnAttach()
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -39,26 +44,26 @@ void MARS::ImGuiLayer::OnAttach()
 	ImGui_ImplOpenGL3_Init();
 }
 
-void MARS::ImGuiLayer::OnDetach()
+void MARS::Overlay::OnDetach()
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 }
 
-void MARS::ImGuiLayer::OnBegin()
+void MARS::Overlay::OnBegin()
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 }
 
-void MARS::ImGuiLayer::RenderLayerUI(bool* bRender)
+void MARS::Overlay::RenderLayerUI()
 {
 	//ImGui::ShowDemoWindow(bRender);
 }
 
-void MARS::ImGuiLayer::OnEnd()
+void MARS::Overlay::OnEnd()
 {
 	ImGuiIO& io = ImGui::GetIO();
 	Application& app = Application::Get();

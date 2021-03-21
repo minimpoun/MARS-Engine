@@ -1,9 +1,9 @@
 #include "UserInterface/OutputLog.h"
 
 OutputLog::OutputLog(const String& InWindowName)
-	: Layer(InWindowName), bAutoScroll(true)
+	: bAutoScroll(true)
 {
-
+	DebugName = InWindowName;
 }
 
 void OutputLog::Clear()
@@ -26,9 +26,9 @@ void OutputLog::AddLog(const char* Str)
 	}
 }
 
-void OutputLog::RenderLayerUI(bool* bRender)
+void OutputLog::RenderLayerUI()
 {
-	Draw(bRender);
+	Draw(nullptr);
 }
 
 void OutputLog::Draw(bool* bOpen = nullptr)

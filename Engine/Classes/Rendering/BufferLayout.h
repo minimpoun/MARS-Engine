@@ -69,7 +69,7 @@ DefineCase(Int4,   4)
 	struct BufferElements
 	{
 		String Name;
-		uint32 Offset;
+		size_t Offset;
 		uint32 Size;
 		ShaderDataType Type;
 		bool bNormalized;

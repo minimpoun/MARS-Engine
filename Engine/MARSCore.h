@@ -61,6 +61,17 @@
 #include "Utility/Logging.hpp"
 #include "Utility/Tick.hpp"
 
+/************************************************************************/
+/* Rendering                                                            */
+/************************************************************************/
+#include "imgui\imgui.h"
+#include "UserInterface\Overlay.h"
+#include "Rendering\BufferLayout.h"
+#include "Rendering\VertexArray.h"
+#include "Rendering\IndexBuffer.h"
+#include "Rendering\Renderer.h"
+
+
 // @TODO(Chrisr): This include needs to be platform based. Probably a MHT thing
 #include "Platform/Windows/Windows_Input.h"
 

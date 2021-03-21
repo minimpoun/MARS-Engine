@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.6.3)
+cmake_minimum_required(VERSION 3.15)
 
 project(MARS)
 
 if(MSVC)
-	add_definitions(-c -W2)
+	add_definitions(/Wall)
 else()
-	add_definitions(-c -Wall -msse2)
+	add_definitions(-c -Wall -msse2 -Wextra)
 endif()
 
 if ( CMAKE_BUILD_TYPE STREQUAL "" )
@@ -108,7 +108,7 @@ target_link_libraries( MARS
 	assimp.lib
 	SDL2.lib
 	SDL2main.lib
-	SDL2test.lib
+	#SDL2test.lib
 	#ImGui.lib
 )
 # End MARS
