@@ -42,3 +42,19 @@ A Game Engine seemed like a huge task and a large challenge which added to the t
 - [ ] DirectX 12
 - [ ] Vulkan
 - [ ] OpenGL 4.6 (In-Progress)
+
+# Getting started
+### Building the Project
+
+- `git clone` the project. 
+- Run `git submodule init` and `git submodule update`
+- Install Visual Studio 2019 if you haven't already
+- Create a folder inside of Thirdparty called "Libs". 
+- Build assimp, glfw3, SDL2 and SDL2main and place their .lib files inside of the Libs folder. 
+- Run the GenProjectFiles.bat script.
+- Run the MARS.sln.bat script
+- Build the ALL_BUILD project in VS
+
+### Running the engine
+- Set the MARSEditor project as the startup project
+- Run the project
